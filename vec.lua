@@ -192,4 +192,36 @@ function vec.lerp(a, b, p)
 	return f
 end
 
+--quaternion begin
+function vec.quaternion(q)
+	local w, x, y, z = q[1], q[2], q[3], q[4]
+	local l = (x*x + y*y + z*z)^(1/2)
+	local t = 2*acos(w)
+	local s = (1 - w*w)^(1/2)
+	return {t*x/l, t*y/l, t*z/l}
+end
+
+
+
+function qtrn.vectoworld(q, v)
+	local w, x, y, z = q[1], q[2], q[3], q[4]
+	local i, j, k = v[1], v[2], v[3]
+	return {
+		i - 2*(i*(y*y + z*z) - j*(x*y - z*w) - k*(x*z + y*w));
+		j + 2*(i*(x*y + z*w) - j*(x*x + z*z) + k*(y*z - x*w));
+		k + 2*(i*(x*z - y*w) + j*(y*z + x*w) - k*(x*x + y*y));
+	}
+end
+
+function qtrn.vectolocal(q, v)
+	local w, x, y, z = q[1], q[2], q[3], q[4]
+	local i, j, k = v[1], v[2], v[3]
+	return {
+		i - 2*(i*(y*y + z*z) - j*(x*y + z*w) - k*(x*z - y*w));
+		j + 2*(i*(x*y - z*w) - j*(x*x + z*z) + k*(y*z + x*w));
+		k + 2*(i*(x*z + y*w) + j*(y*z - x*w) - k*(x*x + y*y));
+	}
+end
+--quaternion end
+
 return vec

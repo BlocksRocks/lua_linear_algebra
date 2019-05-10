@@ -2,42 +2,13 @@ local sin  = math.sin
 local cos  = math.cos
 local acos = math.acos
 
-local qtrn = {}
+local quat = {}
 
-function qtrn.inv(q)
+function quat.inv(q)
 	return {q[1], -q[2], -q[3], -q[4]}
 end
 
-function qtrn.tomat(q)
-	local w, x, y, z = q[1], q[2], q[3], q[4]
-	return {
-		{1 - 2*(y*y + z*z),     2*(x*y - z*w),     2*(x*z + y*w)};
-		{    2*(x*y + z*w), 1 - 2*(x*x + z*z),     2*(y*z - x*w)};
-		{    2*(x*z - y*w),     2*(y*z + x*w), 1 - 2*(x*x + y*y)};
-	}
-end
-
-function qtrn.vectoworld(q, v)
-	local w, x, y, z = q[1], q[2], q[3], q[4]
-	local i, j, k = v[1], v[2], v[3]
-	return {
-		i - 2*(i*(y*y + z*z) - j*(x*y - z*w) - k*(x*z + y*w));
-		j + 2*(i*(x*y + z*w) - j*(x*x + z*z) + k*(y*z - x*w));
-		k + 2*(i*(x*z - y*w) + j*(y*z + x*w) - k*(x*x + y*y));
-	}
-end
-
-function qtrn.vectolocal(q, v)
-	local w, x, y, z = q[1], q[2], q[3], q[4]
-	local i, j, k = v[1], v[2], v[3]
-	return {
-		i - 2*(i*(y*y + z*z) - j*(x*y + z*w) - k*(x*z - y*w));
-		j + 2*(i*(x*y - z*w) - j*(x*x + z*z) + k*(y*z + x*w));
-		k + 2*(i*(x*z + y*w) + j*(y*z - x*w) - k*(x*x + y*y));
-	}
-end
-
-function qtrn.mul(a, b)
+function quat.mul(a, b)
 	local aw, ax, ay, az = a[1], a[2], a[3], a[4]
 	local bw, bx, by, bz = b[1], b[2], b[3], b[4]
 	return {
@@ -48,14 +19,14 @@ function qtrn.mul(a, b)
 	}
 end
 
-function qtrn.pow(q, n)
+function quat.pow(q, n)
 	local w, x, y, z = q[1], q[2], q[3], q[4]
 	local t = n*acos(w)
 	local s = sin(t)/(x*x + y*y + z*z)^(1/2)
 	return {cos(t), s*x, s*y, s*z}
 end
 
-function qtrn.slerp(a, b, n)
+function quat.slerp(a, b, n)
 	local aw, ax, ay, az = a[1], a[2], a[3], a[4]
 	local bw, bx, by, bz = b[1], b[2], b[3], b[4]
 
@@ -65,7 +36,7 @@ function qtrn.slerp(a, b, n)
 		ay = -ay
 		az = -az
 	end
-	
+
 	local w = aw*bw + ax*bx + ay*by + az*bz
 	local x = aw*bx - ax*bw + ay*bz - az*by
 	local y = aw*by - ax*bz - ay*bw + az*bx
@@ -87,7 +58,7 @@ function qtrn.slerp(a, b, n)
 	}
 end
 
-function qtrn.fromaxisangle(v)
+function quat.axisangle(v)
 	local x, y, z = v[1], v[2], v[3]
 	local l = (x*x + y*y + z*z)^(1/2)
 	local x, y, z = x/l, y/l, z/l
@@ -95,24 +66,33 @@ function qtrn.fromaxisangle(v)
 	return {cos(1/2*l), s*x, s*y, s*z}
 end
 
-function qtrn.toaxisangle(q)
-	local w, x, y, z = q[1], q[2], q[3], q[4]
-	local l = (x*x + y*y + z*z)^(1/2)
-	local t = 2*acos(w)
-	local s = (1 - w*w)^(1/2)
-	return {t*x/l, t*y/l, t*z/l}
-end
-
-function qtrn.fromeuleranglesx(t)
+function quat.eulerx(t)
 	return {cos(1/2*t), sin(1/2*t), 0, 0}
 end
 
-function qtrn.fromeuleranglesy(t)
+function quat.eulery(t)
 	return {cos(1/2*t), 0, sin(1/2*t), 0}
 end
 
-function qtrn.fromeuleranglesz(t)
+function quat.eulerz(t)
 	return {cos(1/2*t), 0, 0, sin(1/2*t)}
 end
 
-return qtrn
+function quat.mat(m)
+	local xx, yx, zx, xy, yy, zy, xz, yz, zz = m[1][1], m[1][2], m[1][3], m[2][1], m[2][2], m[2][3], m[3][1], m[3][2], m[3][3]
+	if xx + yy + zz > 0 then
+		local s = 2*(1 + xx + yy + zz)^(1/2)
+		return {1/4*s, (yz - zy)/s, (zx - xz)/s, (xy - yx)/s}
+	elseif xx > yy and xx > zz then
+		local s = 2*(1 + xx - yy - zz)^(1/2)
+		return {(yz - zy)/s, 1/4*s, (yx + xy)/s, (zx + xz)/s}
+	elseif yy > zz then
+		local s = 2*(1 - xx + yy - zz)^(1/2)
+		return {(zx - xz)/s, (yx + xy)/s, 1/4*s, (zy + yz)/s}
+	else
+		local s = 2*(1 - xx - yy + zz)^(1/2)
+		return {(xy - yx)/s, (zx + xz)/s, (zy + yz)/s, 1/4*s}
+	end
+end
+
+return quat

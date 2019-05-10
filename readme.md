@@ -1,7 +1,6 @@
-# Example Site
+# Lua Linear Algebra Library
+Comes with really handy tools for basic Linear Algebra. Vector library is completely general, and mat.lua assumes square matrices. I am kinda proud of this. Enjoy.
 
-This is really cool
+* You need to know Linear Algebra
 
-* Wtf
-
-## Hmm link
+## すごい

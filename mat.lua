@@ -97,8 +97,9 @@ function mat.matdiv(a, b)--lol
 	return f
 end
 
+--here we go
 function mat.matmul(a, b)
-	local f={}
+	local f = {}
 	local n = #a
 	for r = 1, n do
 		f[r] = {}
@@ -113,7 +114,7 @@ function mat.matmul(a, b)
 end
 
 function mat.mattransmul(a, b)
-	local f={}
+	local f = {}
 	local n = #a
 	for r = 1, n do
 		f[r] = {}
@@ -140,7 +141,8 @@ function mat.vecmul(a, b)
 	return f
 end
 
---matrix:number operations
+--basic operation begin
+
 function mat.numsub(a, b)
 	local f = {}
 	local n = #a
@@ -189,22 +191,9 @@ function mat.nummul(a, b)
 	return f
 end
 
-function mat.toquat(m)
-	local xx, yx, zx, xy, yy, zy, xz, yz, zz = m[1][1], m[1][2], m[1][3], m[2][1], m[2][2], m[2][3], m[3][1], m[3][2], m[3][3]
-	if xx + yy + zz > 0 then
-		local s = 2*(1 + xx + yy + zz)^(1/2)
-		return {1/4*s, (yz - zy)/s, (zx - xz)/s, (xy - yx)/s}
-	elseif xx > yy and xx > zz then
-		local s = 2*(1 + xx - yy - zz)^(1/2)
-		return {(yz - zy)/s, 1/4*s, (yx + xy)/s, (zx + xz)/s}
-	elseif yy > zz then
-		local s = 2*(1 - xx + yy - zz)^(1/2)
-		return {(zx - xz)/s, (yx + xy)/s, 1/4*s, (zy + yz)/s}
-	else
-		local s = 2*(1 - xx - yy + zz)^(1/2)
-		return {(xy - yx)/s, (zx + xz)/s, (zy + yz)/s, 1/4*s}
-	end
-end
+--basic operation end
+
+
 
 function mat.fromdir(d)
 	local zx = d[1]
@@ -219,7 +208,9 @@ function mat.fromdir(d)
 	return {{xx, yx, zx}, {xy, yy, zy}, {xz, yz, zz}}
 end
 
-function mat.fromaxisangle(v)
+--axis angle begin
+
+function mat.axisangle(v)
 	local x, y, z = v[1], v[2], v[3]
 	local l = (x*x + y*y + z*z)^(1/2)
 	if l > 0 then
@@ -230,31 +221,50 @@ function mat.fromaxisangle(v)
 		local y = y/l
 		local z = z/l
 		return {
-			{t*x*x + c, t*x*y + z*s, t*x*z - y*s};
-			{t*x*y - z*s, t*y*y + c, t*y*z + x*s};
-			{t*x*z + y*s, t*y*z - x*s, t*z*z + c};
+			{t*x*x +   c, t*y*x + z*s, t*z*x - y*s};
+			{t*x*y - z*s, t*y*y +   c, t*z*y + x*s};
+			{t*x*z + y*s, t*y*z - x*s, t*z*z +   c};
 		}
 	else
 		return {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}
 	end
 end
 
-function mat.fromeuleranglesx(a)
+--axis angle end
+
+--euler begin
+
+function mat.eulerx(a)
 	local s = sin(a)
 	local c = cos(a)
 	return {{1, 0, 0}, {0, c, s}, {0, -s, c}}
 end
 
-function mat.fromeuleranglesy(a)
+function mat.eulery(a)
 	local s = sin(a)
 	local c = cos(a)
 	return {{c, 0, -s}, {0, 1, 0}, {s, 0, c}}
 end
 
-function mat.fromeuleranglesz(a)
+function mat.eulerz(a)
 	local s = sin(a)
 	local c = cos(a)
 	return {{c, s, 0}, {-s, c, 0}, {0, 0, 1}}
 end
+
+--euler end
+
+--quaternion begin
+
+function mat.quat(q)
+	local w, x, y, z = q[1], q[2], q[3], q[4]
+	return {
+		{1 - 2*(y*y + z*z),     2*(x*y - z*w),     2*(x*z + y*w)};
+		{    2*(x*y + z*w), 1 - 2*(x*x + z*z),     2*(y*z - x*w)};
+		{    2*(x*z - y*w),     2*(y*z + x*w), 1 - 2*(x*x + y*y)};
+	}
+end
+
+--quaternion end
 
 return mat
