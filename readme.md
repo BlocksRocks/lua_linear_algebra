@@ -1,6 +1,12 @@
 # Lua Linear Algebra Library
-Comes with really handy tools for basic Linear Algebra. Vector library is completely general, and mat.lua assumes square matrices. I am kinda proud of this. Enjoy.
+## By Jeffrey Skinner
 
+Comes with some handy tools for basic Linear Algebra.
+
+## Notes:
 * You need to know Linear Algebra
+* Each module is associated with it's return type (vec.lua usually returns vectors)
+* General use vector library
+* mat.lua assumes square matrices
 
-## すごい
+Enjoy
