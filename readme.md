@@ -1,12 +1,8 @@
 # Lua Linear Algebra Library
-## By Jeffrey Skinner
 
-Comes with some handy tools for basic Linear Algebra.
+A library that contains the necessities for 3D game development. Make sure you have a good understanding of Linear Algebra. I surely do not.
 
 ## Notes:
-* You need to know Linear Algebra
-* Each module is associated with it's return type (vec.lua usually returns vectors)
-* General use vector library
-* mat.lua assumes square matrices
-
-Enjoy
+* All modules are associated with their return types (vec.lua usually returns vector objects)
+* Your vectors can be any length
+* mat.lua assumes square matrices while dimensions are "n by n"

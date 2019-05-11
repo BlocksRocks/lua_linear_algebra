@@ -1,66 +1,10 @@
---localized
 local sin = math.sin
 local cos = math.cos
 
 local mat = {}
 
---matrix self operations
-function mat.ident(n)
-	local f = {}
-	for r = 1, n do
-		f[r] = {}
-		for c = 1, n do
-			f[r][c] = r == c and 1 or 0
-		end
-	end
-	return f
-end
+--matrix and matrix begin
 
-function mat.fill(n, v)
-	local f = {}
-	for r = 1, n do
-		f[r] = {}
-		for c = 1, n do
-			f[r][c] = v
-		end
-	end
-	return f
-end
-
-function mat.adj(a)
-	--oof
-end
-
-function mat.det(a)
-	--oof
-end
-
-function mat.inv(a)
-	--oof
-end
-
-function mat.trans(m)
-	local f = {}
-	local n = #m
-	for r = 1, n do
-		f[r] = {}
-		for c = 1, n do
-			f[r][c] = m[c][r]
-		end
-	end
-	return f
-end
-
-function mat.column(m, c)
-	local f = {}
-	local n = #m
-	for r = 1, n do
-		f[r] = m[r][c]
-	end
-	return f
-end
-
---matrix:matrix operations
 function mat.matsub(a, b)
 	local f = {}
 	local n = #a
@@ -128,20 +72,9 @@ function mat.mattransmul(a, b)
 	return f
 end
 
---matrix:vector operations
-function mat.vecmul(a, b)
-	local f = {}
-	local n = #a
-	for r = 1, n do
-		f[r] = 0
-		for c = 1, n do
-			f[r] = f[r] + a[r][c]*b[c]
-		end
-	end
-	return f
-end
+--matrix and matrix end
 
---basic operation begin
+--matrix and number begin
 
 function mat.numsub(a, b)
 	local f = {}
@@ -191,22 +124,7 @@ function mat.nummul(a, b)
 	return f
 end
 
---basic operation end
-
-
-
-function mat.fromdir(d)
-	local zx = d[1]
-	local zy = d[2]
-	local zz = d[3]
-	local yy = (zx*zx + zz*zz)^(1/2)
-	local xx = -zz/yy
-	local xy = 0
-	local xz = zx/yy
-	local yx = -zx*zy/yy
-	local yz = -zy*zz/yy
-	return {{xx, yx, zx}, {xy, yy, zy}, {xz, yz, zz}}
-end
+--matrix and number end
 
 --axis angle begin
 
@@ -266,5 +184,72 @@ function mat.quat(q)
 end
 
 --quaternion end
+
+--unit begin
+
+function mat.fromunit(d)
+	local zx = d[1]
+	local zy = d[2]
+	local zz = d[3]
+	local yy = (zx*zx + zz*zz)^(1/2)
+	local xx = -zz/yy
+	local xy = 0
+	local xz = zx/yy
+	local yx = -zx*zy/yy
+	local yz = -zy*zz/yy
+	return {{xx, yx, zx}, {xy, yy, zy}, {xz, yz, zz}}
+end
+
+--unit end
+
+--misc begin
+
+function mat.ident(n)
+	local f = {}
+	for r = 1, n do
+		f[r] = {}
+		for c = 1, n do
+			f[r][c] = r == c and 1 or 0
+		end
+	end
+	return f
+end
+
+function mat.fill(n, v)
+	local f = {}
+	for r = 1, n do
+		f[r] = {}
+		for c = 1, n do
+			f[r][c] = v
+		end
+	end
+	return f
+end
+
+function mat.adj(a)
+	--oof
+end
+
+function mat.det(a)
+	--oof
+end
+
+function mat.inv(a)
+	--oof
+end
+
+function mat.trans(m)
+	local f = {}
+	local n = #m
+	for r = 1, n do
+		f[r] = {}
+		for c = 1, n do
+			f[r][c] = m[c][r]
+		end
+	end
+	return f
+end
+
+--misc end
 
 return mat
